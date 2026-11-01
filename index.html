@@ -1,0 +1,136 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مغامرة بطلات الرياضيات</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#fff7fc;color:#33234b;text-align:center}
+header{background:linear-gradient(135deg,#8054dc,#ed75b8);color:white;padding:25px 12px;border-radius:0 0 30px 30px}
+h1{font-size:27px;margin:8px 0}
+header p{font-size:17px}
+main{max-width:520px;margin:auto;padding:16px}
+.card{background:white;padding:20px 14px;margin:15px 0;border-radius:22px;box-shadow:0 4px 14px #d8c7e8}
+.hero{font-size:55px}
+button{border:0;border-radius:14px;padding:13px 20px;margin:6px;background:#8054dc;color:white;font-size:17px;font-weight:bold;cursor:pointer}
+button:active{transform:scale(.97)}
+.option{display:block;width:100%;background:#f0e8ff;color:#42266d;border:2px solid #e0d2ff}
+.option:hover{background:#e2d3ff}
+#question{font-size:29px;font-weight:bold;margin:22px 0}
+#feedback{font-size:18px;font-weight:bold;min-height:28px}
+#progress{color:#8054dc;font-weight:bold}
+footer{padding:20px;color:#765e89;font-size:14px}
+</style>
+</head>
+<body>
+<header>
+<div style="font-size:35px">👑 ✨ 🦸🏻‍♀️</div>
+<h1>مغامرة بطلات الرياضيات</h1>
+<p>رحلة ممتعة لاكتشاف قوة الأرقام!</p>
+<strong>للصف الثاني الابتدائي</strong>
+</header>
+<main>
+<div class="card" id="welcome">
+<div class="hero">🗺️</div>
+<h2>مرحبًا بالبطلة الصغيرة!</h2>
+<p>استعدي لخوض ثلاث مراحل رياضية، واجمعي النجوم للوصول إلى كنز الرياضيات.</p>
+<button onclick="startGame()">ابدئي المغامرة 🚀</button>
+</div>
+<div class="card" id="game" hidden>
+<div id="progress"></div>
+<h2 id="stage"></h2>
+<div class="hero" id="picture">🌟</div>
+<p id="instruction"></p>
+<div id="question"></div>
+<div id="options"></div>
+<div id="feedback" aria-live="polite"></div>
+<p>⭐ النجوم: <span id="score">0</span></p>
+<button id="next" onclick="nextQuestion()" hidden>السؤال التالي ←</button>
+</div>
+<div class="card" id="result" hidden>
+<div class="hero">🏆</div>
+<h2>أحسنتِ يا بطلة!</h2>
+<p id="finalText"></p>
+<p style="font-size:35px">👑 🌟 🎉</p>
+<button onclick="startGame()">أعيدي المغامرة 🔄</button>
+</div>
+</main>
+<footer>إعداد المعلمة: نورة الشغار 💜</footer>
+<script>
+const rounds=[
+{stage:"المرحلة الأولى: غابة الجمع",pic:"🌳",instruction:"ساعدي البطلة في جمع الكنوز!",q:[
+["12 + 5 = ؟",["16","17","18"],1],
+["23 + 4 = ؟",["26","27","28"],1],
+["15 + 10 = ؟",["20","25","30"],1]]},
+{stage:"المرحلة الثانية: قلعة الطرح",pic:"🏰",instruction:"احسبي لتفتحي أبواب القلعة!",q:[
+["18 − 6 = ؟",["11","12","13"],1],
+["27 − 5 = ؟",["21","22","23"],1],
+["30 − 10 = ؟",["10","20","30"],1]]},
+{stage:"المرحلة الثالثة: كنز الأعداد",pic:"💎",instruction:"أجيبي لتكتشفي الكنز!",q:[
+["ما قيمة الرقم 4 في العدد  forty".replace("forty","45")+"؟",["4 آحاد","4 عشرات","4 مئات"],0],
+["أي الأعداد أكبر؟",["36","63","26"],1],
+["العدد 50 يتكون من:",["5 عشرات","5 آحاد","عشرتين"],0]]}
+];
+let r=0,q=0,score=0,answered=false;
+function startGame(){
+r=0;q=0;score=0;
+document.getElementById("welcome").hidden=true;
+document.getElementById("result").hidden=true;
+document.getElementById("game").hidden=false;
+showQuestion();
+}
+function showQuestion(){
+answered=false;
+let round=rounds[r],item=round.q[q];
+document.getElementById("progress").textContent=`المرحلة ${r+1} من 3 • السؤال ${q+1} من 3`;
+document.getElementById("stage").textContent=round.stage;
+document.getElementById("picture").textContent=round.pic;
+document.getElementById("instruction").textContent=round.instruction;
+document.getElementById("question").textContent=item[0];
+document.getElementById("feedback").textContent="";
+document.getElementById("score").textContent=score;
+document.getElementById("next").hidden=true;
+let box=document.getElementById("options");
+box.innerHTML="";
+item[1].forEach((answer,i)=>{
+let b=document.createElement("button");
+b.className="option";
+b.textContent=answer;
+b.onclick=()=>checkAnswer(i);
+box.appendChild(b);
+});
+}
+function checkAnswer(i){
+if(answered)return;
+answered=true;
+let item=rounds[r].q[q];
+let buttons=document.querySelectorAll(".option");
+buttons.forEach(b=>b.disabled=true);
+if(i===item[2]){
+score+=10;
+document.getElementById("feedback").textContent="إجابة صحيحة! أحسنتِ يا بطلة ⭐";
+}else{
+document.getElementById("feedback").textContent="محاولة جميلة! الإجابة الصحيحة: "+item[1][item[2]];
+}
+document.getElementById("score").textContent=score;
+document.getElementById("next").hidden=false;
+document.getElementById("next").textContent=
+(r===2&&q===2)?"اكتشفي نتيجتك 🏆":"السؤال التالي ←";
+}
+function nextQuestion(){
+if(q<2){q++;}
+else if(r<2){r++;q=0;}
+else{
+document.getElementById("game").hidden=true;
+document.getElementById("result").hidden=false;
+document.getElementById("finalText").textContent=
+`جمعتِ ${score} من 90 نقطة! ${score>=70?"أنتِ بطلة متميزة!":"رائعة! تابعي التدريب لتصبحي أقوى."}`;
+return;
+}
+showQuestion();
+}
+</script>
+</body>
+</html>
